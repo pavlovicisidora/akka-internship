@@ -7,7 +7,6 @@ import com.calculator.actors.{AddActor, CalculatorActor, DivideActor, HistoryAct
 import com.calculator.model.{Add, Divide, Multiply, Result, ShowHistory, Subtract}
 
 import scala.annotation.tailrec
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 
