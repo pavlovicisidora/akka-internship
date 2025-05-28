@@ -1,14 +1,14 @@
 package com.calculator.actors
 
-import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.{Actor, ActorRef}
 import akka.pattern.ask
-import com.calculator.Main.timeout
+import akka.util.Timeout
 import com.calculator.model._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import scala.concurrent.duration.DurationInt
 class CalculatorActor(addActor: ActorRef, subtractActor: ActorRef, multiplyActor: ActorRef, divideActor: ActorRef, historyActor: ActorRef) extends Actor {
+  implicit val timeout: Timeout = Timeout(3.seconds)
   override def receive: Receive = {
     case op: Operations =>
       val replyTo = sender()
@@ -22,6 +22,6 @@ class CalculatorActor(addActor: ActorRef, subtractActor: ActorRef, multiplyActor
         historyActor ! res.output
         replyTo ! res
       }
-    case ShowHistory => historyActor ! ("show")
+    case ShowHistory => historyActor ! "show"
   }
 }

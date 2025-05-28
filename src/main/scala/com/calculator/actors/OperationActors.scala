@@ -5,7 +5,7 @@ import com.calculator.model._
 
 class AddActor extends Actor {
   override def receive: Receive = {
-    case Add(a,b) =>
+    case Add(a, b) =>
       sender() ! Result(s"$a + $b = ${a + b}")
   }
 }
@@ -24,7 +24,7 @@ class MultiplyActor extends Actor {
 
 class DivideActor extends Actor {
   override def receive: Receive = {
-    case (_, 0) => sender() ! Result("You cannot divide by zero")
+    case Divide(_, 0) => sender() ! Result("You cannot divide by zero")
     case Divide(a, b) => sender() ! Result(s"$a / $b = ${a / b}")
   }
 }

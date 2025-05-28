@@ -49,11 +49,11 @@ object Main extends App {
     }
   }
 
-  val calculatorSystem = ActorSystem("CalculatorSystem")
-  val add = calculatorSystem.actorOf(Props[AddActor])
-  val sub = calculatorSystem.actorOf(Props[SubtractActor])
-  val mul = calculatorSystem.actorOf(Props[MultiplyActor])
-  val div = calculatorSystem.actorOf(Props[DivideActor])
+  private val calculatorSystem = ActorSystem("CalculatorSystem")
+  private val add = calculatorSystem.actorOf(Props[AddActor])
+  private val sub = calculatorSystem.actorOf(Props[SubtractActor])
+  private val mul = calculatorSystem.actorOf(Props[MultiplyActor])
+  private val div = calculatorSystem.actorOf(Props[DivideActor])
   val history = calculatorSystem.actorOf(Props[HistoryActor])
 
   val calculator = calculatorSystem.actorOf(Props(new CalculatorActor(add, sub, mul, div, history)))
