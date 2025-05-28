@@ -1,7 +1,7 @@
 package com.calculator.actors
 
 import akka.actor.Actor
-import com.calculator.model.{Add, Divide, Multiply, Result, Subtract}
+import com.calculator.model._
 
 class AddActor extends Actor {
   override def receive: Receive = {

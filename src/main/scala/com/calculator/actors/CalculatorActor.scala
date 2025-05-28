@@ -4,7 +4,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.{Actor, ActorRef}
 import akka.pattern.ask
 import com.calculator.Main.timeout
-import com.calculator.model.{Add, Divide, Multiply, Operations, Result, ShowHistory, Subtract}
+import com.calculator.model._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

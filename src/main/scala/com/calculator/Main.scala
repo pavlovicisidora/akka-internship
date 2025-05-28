@@ -1,10 +1,10 @@
 package com.calculator
 
+import com.calculator.actors._
+import com.calculator.model._
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.calculator.actors.{AddActor, CalculatorActor, DivideActor, HistoryActor, MultiplyActor, SubtractActor}
-import com.calculator.model.{Add, Divide, Multiply, Result, ShowHistory, Subtract}
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,14 +23,11 @@ object Main extends App {
         None
       case "show" :: Nil =>
         Some(ShowHistory)
-      case a :: "+" :: b :: Nil if a.forall(_.isDigit) && b.forall(_.isDigit) =>
-        Some(Add(a.toDouble, b.toDouble))
-      case a :: "-" :: b :: Nil if a.forall(_.isDigit) && b.forall(_.isDigit) =>
-        Some(Subtract(a.toDouble, b.toDouble))
-      case a :: "*" :: b :: Nil if a.forall(_.isDigit) && b.forall(_.isDigit) =>
-        Some(Multiply(a.toDouble, b.toDouble))
-      case a :: "/" :: b :: Nil if a.forall(_.isDigit) && b.forall(_.isDigit) =>
-        Some(Divide(a.toDouble, b.toDouble))
+      case a :: op :: b :: Nil =>
+        for {
+          aNum <- a.toDoubleOption
+          bNum <- b.toDoubleOption
+        } yield getOperation(op, aNum, bNum).get
       case _ =>
         println("Invalid input")
         None
@@ -40,6 +37,16 @@ object Main extends App {
       future.mapTo[Result].foreach(result => println(result.output))
     }
     readLoop()
+  }
+
+  private def getOperation(op: String, a: Double, b: Double): Option[Operations] = {
+    op match {
+      case "+" => Some(Add(a, b))
+      case "-" => Some(Subtract(a, b))
+      case "*" => Some(Multiply(a, b))
+      case "/" => Some(Divide(a, b))
+      case _ => None
+    }
   }
 
   val calculatorSystem = ActorSystem("CalculatorSystem")
