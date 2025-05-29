@@ -5,6 +5,7 @@ import com.calculator.model._
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import utils.InputParser
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,9 +29,13 @@ object Main extends App {
         println("Invalid input")
         None
     }
-    operation.foreach{ op =>
-      val future = calculator ? op
-      future.mapTo[Result].foreach(result => println(result.output))
+    operation.foreach {
+      case op: Operations =>
+        val future = calculator ? op
+        future.mapTo[Result].foreach(result => println(result.output))
+      case op =>
+        val future = calculator ? op
+        future.mapTo[History].foreach(hist => hist.entries.foreach(println))
     }
     readLoop()
   }

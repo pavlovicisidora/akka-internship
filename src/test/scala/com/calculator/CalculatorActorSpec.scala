@@ -58,7 +58,7 @@ class CalculatorActorSpec extends TestKit(ActorSystem("TestSystem"))
       val historyProbe = TestProbe()
       val calculator = system.actorOf(Props(new CalculatorActor(probe.ref, probe.ref, probe.ref, probe.ref, historyProbe.ref)))
       calculator ! ShowHistory
-      historyProbe.expectMsg("show")
+      historyProbe.expectMsg(ShowHistory)
     }
 
     "handle dividing by zero" in {

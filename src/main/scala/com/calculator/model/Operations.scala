@@ -8,3 +8,4 @@ case class Divide(a: Double, b: Double) extends Operations
 
 case object ShowHistory
 case class Result(output: String)
+case class History(entries: List[String])

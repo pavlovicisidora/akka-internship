@@ -2,21 +2,17 @@ package com.calculator
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import akka.util.Timeout
 import com.calculator.model.{Add, ShowHistory, Subtract}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-
-import scala.concurrent.duration.DurationInt
+import utils.InputParser
 
 class InputParserSpec extends TestKit(ActorSystem("TestSystem"))
   with ImplicitSender
   with AnyWordSpecLike
   with Matchers
   with BeforeAndAfterAll {
-
-  implicit val timeout: Timeout = Timeout(3.seconds)
 
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)

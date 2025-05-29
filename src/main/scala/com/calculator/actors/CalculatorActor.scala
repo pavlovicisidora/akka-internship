@@ -22,6 +22,10 @@ class CalculatorActor(addActor: ActorRef, subtractActor: ActorRef, multiplyActor
         historyActor ! res.output
         replyTo ! res
       }
-    case ShowHistory => historyActor ! "show"
+    case ShowHistory =>
+      val replyTo = sender()
+      (historyActor ? ShowHistory).mapTo[History].foreach {
+        hist => replyTo ! hist
+      }
   }
 }

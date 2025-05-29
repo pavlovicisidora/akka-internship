@@ -1,6 +1,6 @@
-package com.calculator
+package com.calculator.utils
 
-import com.calculator.model.{Add, Divide, Multiply, Operations, ShowHistory, Subtract}
+import com.calculator.model._
 
 object InputParser {
   def parse(input: String): Option[Any] = {
