@@ -1,9 +1,8 @@
 package com.calculator
 
-import com.calculator.actors.{AddActor, CalculatorActor, DivideActor, HistoryActor, MultiplyActor, SubtractActor}
+import com.calculator.actors.{AddActor, CalculatorActor, DivideActor, MultiplyActor, SubtractActor}
 import com.calculator.model.{Add, Divide, Multiply, Result, ShowHistory, Subtract}
 import akka.actor.{ActorSystem, Props}
-import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers

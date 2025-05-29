@@ -14,20 +14,16 @@ object Main extends App {
   implicit val timeout: Timeout = Timeout(3.seconds)
   @tailrec
   private def readLoop(): Unit = {
-    val input = scala.io.StdIn.readLine("> ").trim.toLowerCase().split(" ").toList
-    val operation = input match {
-      case "exit" :: Nil =>
+    val input = scala.io.StdIn.readLine("> ")
+    val operation = InputParser.parse(input) match {
+      case Some("exit") =>
         println("Exiting...")
         calculatorSystem.terminate()
         sys.exit()
-        None
-      case "show" :: Nil =>
+      case Some(ShowHistory) =>
         Some(ShowHistory)
-      case a :: op :: b :: Nil =>
-        for {
-          aNum <- a.toDoubleOption
-          bNum <- b.toDoubleOption
-        } yield getOperation(op, aNum, bNum).get
+      case Some(op: Operations) =>
+        Some(op)
       case _ =>
         println("Invalid input")
         None
@@ -37,16 +33,6 @@ object Main extends App {
       future.mapTo[Result].foreach(result => println(result.output))
     }
     readLoop()
-  }
-
-  private def getOperation(op: String, a: Double, b: Double): Option[Operations] = {
-    op match {
-      case "+" => Some(Add(a, b))
-      case "-" => Some(Subtract(a, b))
-      case "*" => Some(Multiply(a, b))
-      case "/" => Some(Divide(a, b))
-      case _ => None
-    }
   }
 
   private val calculatorSystem = ActorSystem("CalculatorSystem")
