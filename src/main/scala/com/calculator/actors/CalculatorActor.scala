@@ -24,8 +24,11 @@ class CalculatorActor(addActor: ActorRef, subtractActor: ActorRef, multiplyActor
       }
     case ShowHistory =>
       val replyTo = sender()
-      (historyActor ? ShowHistory).mapTo[History].foreach {
-        hist => replyTo ! hist
-      }
+      (historyActor ? ShowHistory).mapTo[History].foreach(replyTo ! _)
+
+    case SubscribeToHistory(subscriber) =>
+      historyActor.tell(Subscribe, subscriber)
+    case UnsubscribeFromHistory(subscriber) =>
+      historyActor.tell(Unsubscribe, subscriber)
   }
 }

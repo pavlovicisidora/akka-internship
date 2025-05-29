@@ -1,15 +1,26 @@
 package com.calculator.routes
 
-import akka.actor.ActorRef
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
-import com.calculator.model._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.stream.scaladsl.Source
+import akka.stream.OverflowStrategy
+import akka.http.scaladsl.model.sse.ServerSentEvent
+import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
+import akka.stream.Materializer
+import akka.stream.SystemMaterializer
 import com.calculator.utils.JsonFormats
+import com.calculator.model._
+
+import scala.concurrent.duration.DurationInt
+
 
 class CalculatorRoutes(calculator: ActorRef) (implicit val timeout: Timeout) extends JsonFormats {
+  implicit val system: ActorSystem = ActorSystem("CalculatorSystem")
+  implicit val materializer: Materializer = SystemMaterializer(system).materializer
   val routes: Route =
     path("add") {
       post {
@@ -46,6 +57,28 @@ class CalculatorRoutes(calculator: ActorRef) (implicit val timeout: Timeout) ext
       path("history") {
         get {
           complete((calculator ? ShowHistory).mapTo[History])
+        }
+      } ~
+      path("stream-history") {
+        get {
+          complete {
+            val source: Source[ServerSentEvent, ActorRef] =
+              Source.actorRef[String](
+                  bufferSize = 64,
+                  overflowStrategy = OverflowStrategy.dropHead
+                )
+                .map(ServerSentEvent(_))
+                .keepAlive(10.seconds, () => ServerSentEvent.heartbeat)
+
+            val (actorRef, stream) = source.preMaterialize()
+
+            calculator ! SubscribeToHistory(actorRef)
+
+            stream.watchTermination(){ (_, done) =>
+              done.onComplete(_ => calculator ! UnsubscribeFromHistory(actorRef))(scala.concurrent.ExecutionContext.global)
+            }
+            stream
+          }
         }
       }
 }
