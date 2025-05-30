@@ -45,4 +45,12 @@ trait JsonFormats extends DefaultJsonProtocol {
   implicit val workspaceFormat: RootJsonFormat[Workspace] = jsonFormat5(Workspace)
   implicit val projectFormat: RootJsonFormat[Project] = jsonFormat7(Project)
   implicit val jobFormat: RootJsonFormat[Job] = jsonFormat8(Job)
+
+  implicit val workspaceFormatCreate: RootJsonFormat[WorkspaceRequestCreate] = jsonFormat2(WorkspaceRequestCreate)
+  implicit val projectFormatCreate: RootJsonFormat[ProjectRequestCreate] = jsonFormat3(ProjectRequestCreate)
+  implicit val jobFormatCreate: RootJsonFormat[JobRequestCreate] = jsonFormat4(JobRequestCreate)
+
+  implicit val workspaceFormatUpdate: RootJsonFormat[WorkspaceRequestUpdate] = jsonFormat2(WorkspaceRequestUpdate)
+  implicit val projectFormatUpdate: RootJsonFormat[ProjectRequestUpdate] = jsonFormat3(ProjectRequestUpdate)
+  implicit val jobFormatUpdate: RootJsonFormat[JobRequestUpdate] = jsonFormat4(JobRequestUpdate)
 }

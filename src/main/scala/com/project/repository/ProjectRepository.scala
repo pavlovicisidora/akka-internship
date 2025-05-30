@@ -1,22 +1,19 @@
 package com.project.repository
 
 import com.project.enums.ProjectStatus
+import com.project.enums.ProjectStatus.Deleted
 import com.project.model.Project
 import org.joda.time.DateTime
 
 import java.util.UUID
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class ProjectRepository {
+class ProjectRepository()(implicit ec: ExecutionContext) {
   private val projects: mutable.Map[UUID, Project] = mutable.Map.empty
 
-  def create(workspaceId: UUID, name: String, description: Option[String], status: ProjectStatus): Future[Project] = Future {
-    val id = UUID.randomUUID()
-    val now = DateTime.now
-    val project = Project(id, workspaceId, name, description, status, now, now)
-    projects.put(id, project)
+  def create(project: Project): Future[Project] = Future {
+    projects.put(project.id, project)
     project
   }
 
@@ -24,25 +21,25 @@ class ProjectRepository {
 
   def getAll(): Future[List[Project]] = Future(projects.values.toList)
 
-  def update(id: UUID,
-             name: Either[Unit, String],
-             description: Either[Unit, Option[String]],
-             status: Either[Unit, ProjectStatus]
-            ): Future[Option[Project]] = Future {
-    projects.get(id).map { existing =>
-      val updated = existing.copy(
-        name = name.getOrElse(existing.name),
-        description = description.getOrElse(existing.description),
-        status = status.getOrElse(existing.status),
-        updated_at = DateTime.now)
-      projects.update(id, updated)
-      updated
+  def update(newProject: Project): Future[Option[Project]] = Future {
+    projects.get(newProject.id).map { _ =>
+      projects.update(newProject.id, newProject)
+      newProject
     }
   }
 
-  def delete(id: UUID): Future[Boolean] = Future(projects.remove(id).isDefined)
+  def delete(id: UUID): Future[Option[Project]] = Future {
+    projects.get(id).map { existing =>
+      val deleted = existing.copy(
+        status = Deleted,
+        updated_at = DateTime.now)
+      projects.update(id, deleted)
+      deleted
+    }
+  }
 
   def getByWorkspace(workspaceId: UUID) : Future[List[Project]] = Future {
     projects.values.filter(_.workspace_id == workspaceId).toList
   }
+
 }
