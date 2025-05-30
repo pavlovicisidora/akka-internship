@@ -17,10 +17,11 @@ import com.calculator.model._
 
 import scala.concurrent.duration.DurationInt
 
-
 class CalculatorRoutes(calculator: ActorRef) (implicit val timeout: Timeout) extends JsonFormats {
+
   implicit val system: ActorSystem = ActorSystem("CalculatorSystem")
   implicit val materializer: Materializer = SystemMaterializer(system).materializer
+
   val routes: Route =
     path("add") {
       post {
@@ -81,4 +82,5 @@ class CalculatorRoutes(calculator: ActorRef) (implicit val timeout: Timeout) ext
           }
         }
       }
+
 }
