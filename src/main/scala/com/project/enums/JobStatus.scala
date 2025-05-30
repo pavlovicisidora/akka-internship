@@ -10,4 +10,13 @@ object JobStatus extends Enum[JobStatus] {
   case object Done extends JobStatus
 
   override val values: IndexedSeq[JobStatus] = findValues
+
+  def fromString(s: String): Option[JobStatus] = {
+    s.toLowerCase match {
+      case "pending" => Some(Pending)
+      case "inprogress" => Some(InProgress)
+      case "done" => Some(Done)
+      case _ => None
+    }
+  }
 }

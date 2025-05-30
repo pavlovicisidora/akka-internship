@@ -5,7 +5,7 @@ import com.project.enums.JobStatus._
 import com.project.enums._
 import com.project.model._
 import org.joda.time.DateTime
-import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, RootJsonFormat}
+import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
 
 import java.util.UUID
 
@@ -27,6 +27,7 @@ trait JsonFormats extends DefaultJsonProtocol {
         case JsString("Pending") => Pending
         case JsString("InProgress") => InProgress
         case JsString("Done") => Done
+        case _ => throw DeserializationException("Invalid status")
       }
   }
 
@@ -37,6 +38,7 @@ trait JsonFormats extends DefaultJsonProtocol {
         case JsString("Active") => Active
         case JsString("Completed") => Completed
         case JsString("Deleted") => Deleted
+        case _ => throw DeserializationException("Invalid status")
       }
   }
 
