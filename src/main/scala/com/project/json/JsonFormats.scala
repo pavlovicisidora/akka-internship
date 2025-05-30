@@ -10,6 +10,7 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsVa
 import java.util.UUID
 
 trait JsonFormats extends DefaultJsonProtocol {
+
   implicit object UUIDFormat extends JsonFormat[UUID] {
     override def write(uuid: UUID): JsValue = JsString(uuid.toString)
     override def read(value: JsValue): UUID = UUID.fromString(value.convertTo[String])

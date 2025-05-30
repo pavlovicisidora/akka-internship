@@ -1,6 +1,5 @@
 package com.project.repository
 
-import com.project.enums.ProjectStatus
 import com.project.enums.ProjectStatus.Deleted
 import com.project.model.Project
 import org.joda.time.DateTime
@@ -10,6 +9,7 @@ import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 class ProjectRepository()(implicit ec: ExecutionContext) {
+
   private val projects: mutable.Map[UUID, Project] = mutable.Map.empty
 
   def create(project: Project): Future[Project] = Future {
@@ -19,7 +19,7 @@ class ProjectRepository()(implicit ec: ExecutionContext) {
 
   def getById(id: UUID): Future[Option[Project]] = Future(projects.get(id))
 
-  def getAll(): Future[List[Project]] = Future(projects.values.toList)
+  def getAll: Future[List[Project]] = Future(projects.values.toList)
 
   def update(newProject: Project): Future[Option[Project]] = Future {
     projects.get(newProject.id).map { _ =>

@@ -22,8 +22,10 @@ case class JobRequestCreate(
                        description: Option[String],
                        due_date: Option[DateTime]
                      ) {
+
   def toDomain: Job =
     Job(UUID.randomUUID(), project_id, name, description, JobStatus.Pending, due_date, DateTime.now, DateTime.now)
+
 }
 
 case class JobRequestUpdate(
@@ -32,6 +34,7 @@ case class JobRequestUpdate(
                        status: Option[JobStatus],
                        due_date: Either[Unit, Option[DateTime]]
                      ) {
+
   def toDomain(job: Job) : Job = {
     val newName = name.getOrElse(job.name)
 
@@ -57,4 +60,5 @@ case class JobRequestUpdate(
       updated_at = DateTime.now
     )
   }
+
 }
