@@ -1,6 +1,6 @@
 package com.project.enums
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum._
 
 sealed trait JobStatus extends EnumEntry
 
