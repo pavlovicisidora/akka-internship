@@ -15,11 +15,14 @@ case class WorkspaceRequestCreate(
                              name: String,
                              description: Option[String]
                            ) {
+
   def toDomain : Workspace =
     Workspace(UUID.randomUUID(), name, description, DateTime.now, DateTime.now)
+
 }
 
 case class WorkspaceRequestUpdate(name: Option[String], description: Either[Unit, Option[String]]) {
+
   def toDomain(workspace : Workspace) : Workspace = {
     val newName = name.getOrElse(workspace.name)
 
@@ -34,4 +37,5 @@ case class WorkspaceRequestUpdate(name: Option[String], description: Either[Unit
       updated_at = DateTime.now()
     )
   }
+
 }

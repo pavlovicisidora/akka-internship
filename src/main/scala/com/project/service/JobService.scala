@@ -1,14 +1,13 @@
 package com.project.service
 
-import com.project.enums.JobStatus
 import com.project.model.{Job, JobRequestCreate, JobRequestUpdate}
 import com.project.repository.{JobRepository, ProjectRepository}
-import org.joda.time.DateTime
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class JobService(jobRepository: JobRepository, projectRepository: ProjectRepository)(implicit ec: ExecutionContext) {
+
   def create(jRequest: JobRequestCreate): Future[Option[Job]] = {
     projectRepository.getById(jRequest.project_id). flatMap {
       case Some(_) => jobRepository.create(jRequest.toDomain).map(Some(_))
@@ -19,9 +18,8 @@ class JobService(jobRepository: JobRepository, projectRepository: ProjectReposit
   def getById(id: UUID): Future[Option[Job]] =
     jobRepository.getById(id)
 
-
   def getAll: Future[List[Job]] =
-    jobRepository.getAll()
+    jobRepository.getAll
 
   def update(id: UUID, request: JobRequestUpdate): Future[Option[Job]] = {
     jobRepository.getById(id).flatMap {

@@ -20,8 +20,10 @@ case class ProjectRequestCreate(
                            name: String,
                            description: Option[String]
                          ) {
+
   def toDomain : Project =
     Project(UUID.randomUUID(), workspace_id, name, description, ProjectStatus.Active, DateTime.now, DateTime.now)
+
 }
 
 case class ProjectRequestUpdate(
@@ -29,6 +31,7 @@ case class ProjectRequestUpdate(
                                  description: Either[Unit, Option[String]],
                                  status: Option[ProjectStatus]
                                ) {
+
   def toDomain(project : Project) : Project = {
     val newName = name.getOrElse(project.name)
 
@@ -49,4 +52,5 @@ case class ProjectRequestUpdate(
       updated_at = DateTime.now()
     )
   }
+
 }

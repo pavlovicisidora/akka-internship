@@ -1,14 +1,13 @@
 package com.project.repository
 
-import com.project.enums.JobStatus
 import com.project.model.Job
-import org.joda.time.DateTime
 
 import java.util.UUID
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 class JobRepository()(implicit ec: ExecutionContext) {
+
   private val jobs: mutable.Map[UUID, Job] = mutable.Map.empty
 
   def create(job: Job): Future[Job] = Future {
@@ -18,7 +17,7 @@ class JobRepository()(implicit ec: ExecutionContext) {
 
   def getById(id: UUID): Future[Option[Job]] = Future(jobs.get(id))
 
-  def getAll(): Future[List[Job]] = Future(jobs.values.toList)
+  def getAll: Future[List[Job]] = Future(jobs.values.toList)
 
   def update(newJob: Job): Future[Option[Job]] = Future {
     jobs.get(newJob.id).map { _ =>

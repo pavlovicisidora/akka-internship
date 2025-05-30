@@ -2,7 +2,6 @@ package com.project.service
 
 import com.project.model.{Workspace, WorkspaceRequestCreate, WorkspaceRequestUpdate}
 import com.project.repository.WorkspaceRepository
-import org.joda.time.DateTime
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,9 +14,8 @@ class WorkspaceService(repository: WorkspaceRepository)(implicit ec: ExecutionCo
   def getById(id: UUID): Future[Option[Workspace]] =
     repository.getById(id)
 
-
   def getAll: Future[List[Workspace]] =
-    repository.getAll()
+    repository.getAll
 
   def update(id: UUID, request: WorkspaceRequestUpdate): Future[Option[Workspace]] = {
     repository.getById(id).flatMap {
