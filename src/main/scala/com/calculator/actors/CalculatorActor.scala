@@ -7,10 +7,11 @@ import com.calculator.model._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
+
 class CalculatorActor(addActor: ActorRef, subtractActor: ActorRef, multiplyActor: ActorRef, divideActor: ActorRef, historyActor: ActorRef) extends Actor {
   implicit val timeout: Timeout = Timeout(3.seconds)
   override def receive: Receive = {
-    case op: Operations =>
+    case op: Operation =>
       val replyTo = sender()
       val operationFuture = op match {
         case _: Add => (addActor ? op).mapTo[Result]

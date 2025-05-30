@@ -17,25 +17,25 @@ object Main extends App {
   private def readLoop(): Unit = {
     val input = scala.io.StdIn.readLine("> ")
     val operation = InputParser.parse(input) match {
-      case Some("exit") =>
+      case Some(Exit) =>
         println("Exiting...")
         calculatorSystem.terminate()
         sys.exit()
       case Some(ShowHistory) =>
         Some(ShowHistory)
-      case Some(op: Operations) =>
+      case Some(op: Operation) =>
         Some(op)
       case _ =>
         println("Invalid input")
         None
     }
     operation.foreach {
-      case op: Operations =>
+      case op: Operation =>
         val future = calculator ? op
-        future.mapTo[Result].foreach(result => println(result.output))
+        future.mapTo[Result].foreach(r => println(r.output))
       case op =>
         val future = calculator ? op
-        future.mapTo[History].foreach(hist => hist.entries.foreach(println))
+        future.mapTo[History].foreach(_.entries.foreach(println))
     }
     readLoop()
   }

@@ -6,7 +6,7 @@ object InputParser {
   def parse(input: String): Option[Any] = {
     input.trim.toLowerCase().split(" ").toList match {
       case "exit" :: Nil =>
-        Some("exit")
+        Some(Exit)
       case "show" :: Nil =>
         Some(ShowHistory)
       case a :: op :: b :: Nil =>
@@ -20,7 +20,7 @@ object InputParser {
     }
   }
 
-  private def getOperation(op: String, a: Double, b: Double): Option[Operations] = {
+  private def getOperation(op: String, a: Double, b: Double): Option[Operation] = {
     op match {
       case "+" => Some(Add(a, b))
       case "-" => Some(Subtract(a, b))
