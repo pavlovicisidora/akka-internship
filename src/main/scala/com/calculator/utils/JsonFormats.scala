@@ -1,8 +1,7 @@
 package com.calculator.utils
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import com.calculator.model._
-import spray.json.{DefaultJsonProtocol, JsValue, RootJsonFormat, enrichAny}
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 trait JsonFormats extends DefaultJsonProtocol {
   implicit val addFormat: RootJsonFormat[Add] = jsonFormat2(Add)
