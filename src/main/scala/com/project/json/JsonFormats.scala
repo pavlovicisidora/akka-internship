@@ -1,5 +1,6 @@
 package com.project.json
 
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import com.project.enums.JobStatus._
 import com.project.enums.ProjectStatus._
 import com.project.enums._
@@ -10,7 +11,7 @@ import spray.json._
 
 import java.util.UUID
 
-trait JsonFormats extends DefaultJsonProtocol {
+trait JsonFormats extends DefaultJsonProtocol with SprayJsonSupport{
 
   implicit object UUIDFormat extends JsonFormat[UUID] {
     override def write(uuid: UUID): JsValue = JsString(uuid.toString)

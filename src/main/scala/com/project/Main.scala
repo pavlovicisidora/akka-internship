@@ -1,15 +1,18 @@
 package com.project
 
 import akka.actor.{ActorSystem, Props}
+import akka.util.Timeout
 import com.project.actors.{HttpServerActor, JobActor, ProjectActor, WorkspaceActor}
 import com.project.repository.{JobRepository, ProjectRepository, WorkspaceRepository}
 import com.project.service.{JobService, ProjectService, WorkspaceService}
 
 import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration.DurationInt
 
 object Main extends App {
   implicit val system: ActorSystem = ActorSystem("ProjectSystem")
   implicit  val ec: ExecutionContextExecutor = system.dispatcher
+  implicit val timeout: Timeout = Timeout(3.seconds)
 
   val workspaceRepository = new WorkspaceRepository()
   val projectRepository = new ProjectRepository()

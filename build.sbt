@@ -17,6 +17,7 @@ fork := true
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.8.8",
   "com.typesafe.akka" %% "akka-testkit" % "2.8.8" % Test,
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.5.3" % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.18",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "com.typesafe.akka" %% "akka-http" % "10.5.3",
