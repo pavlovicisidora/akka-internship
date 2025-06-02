@@ -12,7 +12,7 @@ class ProjectActor(projectService: ProjectService)(implicit ec: ExecutionContext
 
   override def receive: Receive = {
     case CreateProject(request) => projectService.create(request).pipeTo(sender)
-    case GetJob(id) => projectService.getById(id).pipeTo(sender)
+    case GetProject(id) => projectService.getById(id).pipeTo(sender)
     case UpdateProject(id, request) => projectService.update(id, request).pipeTo(sender)
     case DeleteProject(id) => projectService.delete(id).pipeTo(sender)
     case GetAllProjects => projectService.getAll.pipeTo(sender)

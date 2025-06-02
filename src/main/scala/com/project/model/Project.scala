@@ -28,16 +28,17 @@ case class ProjectRequestCreate(
 
 case class ProjectRequestUpdate(
                                  name: Option[String],
-                                 description: Either[Unit, Option[String]],
+                                 description: Option[TriState[String]],
                                  status: Option[ProjectStatus]
                                ) {
 
   def toDomain(project : Project) : Project = {
     val newName = name.getOrElse(project.name)
 
-    val newDescription = description match {
-      case Left(_)         => project.description
-      case Right(newValue) => newValue
+    val newDescription: Option[String] = description.getOrElse(TriState.Unset) match {
+      case TriState.Set(value) => Some(value)
+      case TriState.Null => None
+      case _ => project.description
     }
 
     val newStatus = status.getOrElse(project.status)

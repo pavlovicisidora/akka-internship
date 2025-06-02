@@ -30,24 +30,26 @@ case class JobRequestCreate(
 
 case class JobRequestUpdate(
                        name: Option[String],
-                       description: Either[Unit, Option[String]],
+                       description: Option[TriState[String]],
                        status: Option[JobStatus],
-                       due_date: Either[Unit, Option[DateTime]]
+                       due_date: Option[TriState[DateTime]]
                      ) {
 
   def toDomain(job: Job) : Job = {
     val newName = name.getOrElse(job.name)
 
-    val newDescription = description match {
-      case Left(_)         => job.description
-      case Right(newValue) => newValue
+    val newDescription: Option[String] = description.getOrElse(TriState.Unset) match {
+      case TriState.Set(value) => Some(value)
+      case TriState.Null => None
+      case _ => job.description
     }
 
     val newStatus = status.getOrElse(job.status)
 
-    val newDueDate = due_date match {
-      case Left(_)         => job.due_date
-      case Right(newValue) => newValue
+    val newDueDate: Option[DateTime] = due_date.getOrElse(TriState.Unset) match {
+      case TriState.Set(value) => Some(value)
+      case TriState.Null => None
+      case _ => job.due_date
     }
 
     job.copy(

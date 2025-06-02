@@ -13,7 +13,7 @@ import com.project.protocol.WorkspaceProtocol._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WorkspaceRoutes(workspaceActor: ActorRef)(implicit timeout: Timeout, ec: ExecutionContext) extends JsonFormats{
+class WorkspaceRoutes(workspaceActor: ActorRef)(implicit timeout: Timeout, ec: ExecutionContext) extends JsonFormats {
   
   val routes: Route =
     pathPrefix("workspace") {
