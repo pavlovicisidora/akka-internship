@@ -1,5 +1,7 @@
 package com.project.model
 
+import com.project.model.TriState.Unset
+
 import java.util.UUID
 import org.joda.time.DateTime
 
@@ -21,14 +23,18 @@ case class WorkspaceRequestCreate(
 
 }
 
-case class WorkspaceRequestUpdate(name: Option[String], description: Either[Unit, Option[String]]) {
+case class WorkspaceRequestUpdate(name: Option[TriState[String]], description: Option[TriState[String]]) {
 
   def toDomain(workspace : Workspace) : Workspace = {
-    val newName = name.getOrElse(workspace.name)
+    val newName: String = name.getOrElse(TriState.Unset) match {
+      case TriState.Set(value) => value
+      case _ => workspace.name
+    }
 
-    val newDescription = description match {
-      case Left(_)         => workspace.description
-      case Right(newValue) => newValue
+    val newDescription: Option[String] = description.getOrElse(TriState.Unset) match {
+      case TriState.Set(value) => Some(value)
+      case TriState.Null => None
+      case _ => workspace.description
     }
 
     workspace.copy(

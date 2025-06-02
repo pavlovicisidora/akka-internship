@@ -1,11 +1,12 @@
 package com.project.json
 
-import com.project.enums.ProjectStatus._
 import com.project.enums.JobStatus._
+import com.project.enums.ProjectStatus._
 import com.project.enums._
 import com.project.model._
+import com.project.json.TriStateJsonFormat._
 import org.joda.time.DateTime
-import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
+import spray.json._
 
 import java.util.UUID
 
@@ -51,7 +52,10 @@ trait JsonFormats extends DefaultJsonProtocol {
   implicit val projectFormatCreate: RootJsonFormat[ProjectRequestCreate] = jsonFormat3(ProjectRequestCreate)
   implicit val jobFormatCreate: RootJsonFormat[JobRequestCreate] = jsonFormat4(JobRequestCreate)
 
+  implicit val triStateOptionStringFormat: JsonFormat[TriState[Option[String]]] = triStateFormat[Option[String]]
+  implicit val triStateStringFormat: JsonFormat[TriState[String]] = triStateFormat[String]
   implicit val workspaceFormatUpdate: RootJsonFormat[WorkspaceRequestUpdate] = jsonFormat2(WorkspaceRequestUpdate)
+
   implicit val projectFormatUpdate: RootJsonFormat[ProjectRequestUpdate] = jsonFormat3(ProjectRequestUpdate)
   implicit val jobFormatUpdate: RootJsonFormat[JobRequestUpdate] = jsonFormat4(JobRequestUpdate)
 }
