@@ -8,15 +8,17 @@ import com.project.service.{JobService, ProjectService, WorkspaceService}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
+import slick.jdbc.PostgresProfile.api._
 
 object Main extends App {
   implicit val system: ActorSystem = ActorSystem("ProjectSystem")
   implicit  val ec: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(3.seconds)
+  val db = Database.forConfig("db")
 
-  val workspaceRepository = new WorkspaceRepository()
-  val projectRepository = new ProjectRepository()
-  val jobRepository = new JobRepository()
+  val workspaceRepository = new WorkspaceRepository(db)
+  val projectRepository = new ProjectRepository(db)
+  val jobRepository = new JobRepository(db)
 
   val workspaceService = new WorkspaceService(workspaceRepository)
   val projectService = new ProjectService(projectRepository, workspaceRepository)

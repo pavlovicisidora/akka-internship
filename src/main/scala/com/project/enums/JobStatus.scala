@@ -11,12 +11,25 @@ object JobStatus extends Enum[JobStatus] {
 
   override val values: IndexedSeq[JobStatus] = findValues
 
-  def fromString(s: String): Option[JobStatus] = {
-    s.toLowerCase match {
-      case "pending" => Some(Pending)
-      case "inprogress" => Some(InProgress)
-      case "done" => Some(Done)
-      case _ => None
+  def fromString(s: String): JobStatus = {
+    s.toLowerCase.filterNot(_.isWhitespace) match {
+      case "pending" => Pending
+      case "inprogress" => InProgress
+      case "done" => Done
+      case other       => throw new IllegalArgumentException(s"Unknown status: $other")
     }
   }
+
+  def toString(status: JobStatus): String = status match {
+    case Pending    => "Pending"
+    case InProgress => "In progress"
+    case Done    => "Done"
+    case other       => throw new IllegalArgumentException(s"Unknown status: $other")
+  }
+
+  import slick.jdbc.PostgresProfile.api._
+  implicit val projectStatusColumnType: BaseColumnType[JobStatus] =
+    MappedColumnType.base[JobStatus, String](
+      toString, fromString
+    )
 }
