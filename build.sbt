@@ -29,5 +29,9 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.6.0",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.4.1",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.4.2"
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.4.2",
+  "org.scalikejdbc" %% "scalikejdbc"       % "4.3.2",
+  "com.h2database"  %  "h2"                % "2.2.224",
+  "ch.qos.logback"  %  "logback-classic"   % "1.5.6",
+  "org.scalikejdbc" %% "scalikejdbc-config" % "4.0.0"
 )

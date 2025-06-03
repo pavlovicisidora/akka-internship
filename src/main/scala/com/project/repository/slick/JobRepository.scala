@@ -1,4 +1,4 @@
-package com.project.repository
+package com.project.repository.slick
 
 import com.project.database.JobTable
 import com.project.model.Job
@@ -40,7 +40,7 @@ class JobRepository(db: Database)(implicit ec: ExecutionContext) {
   def delete(id: UUID): Future[Boolean] =
     db.run(table.filter(_.id === id).delete.map(_ > 0))
 
-  def getByWorkspace(projectId: UUID) : Future[List[Job]] = {
+  def getByProject(projectId: UUID) : Future[List[Job]] = {
     db.run(table.filter(_.projectId === projectId).result).map(_.toList)
   }
 

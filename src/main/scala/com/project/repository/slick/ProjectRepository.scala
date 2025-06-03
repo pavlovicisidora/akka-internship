@@ -1,4 +1,4 @@
-package com.project.repository
+package com.project.repository.slick
 
 import com.project.database.ProjectTable
 import com.project.enums.ProjectStatus.Deleted

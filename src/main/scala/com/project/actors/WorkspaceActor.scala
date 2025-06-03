@@ -3,7 +3,8 @@ package com.project.actors
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.project.protocol.WorkspaceProtocol._
-import com.project.service.WorkspaceService
+import com.project.service.scalikejdbc.WorkspaceService
+//import com.project.service.slick.WorkspaceService
 
 import scala.concurrent.ExecutionContext
 

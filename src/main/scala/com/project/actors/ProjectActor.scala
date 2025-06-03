@@ -4,7 +4,8 @@ import akka.actor.Actor
 import akka.pattern.pipe
 import com.project.protocol.JobProtocol.GetJob
 import com.project.protocol.ProjectProtocol._
-import com.project.service.ProjectService
+//import com.project.service.slick.ProjectService
+import com.project.service.scalikejdbc.ProjectService
 
 import scala.concurrent.ExecutionContext
 

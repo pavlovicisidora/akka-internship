@@ -1,7 +1,7 @@
-package com.project.service
+package com.project.service.slick
 
 import com.project.model.{Project, ProjectRequestCreate, ProjectRequestUpdate}
-import com.project.repository.{ProjectRepository, WorkspaceRepository}
+import com.project.repository.slick.{ProjectRepository, WorkspaceRepository}
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
