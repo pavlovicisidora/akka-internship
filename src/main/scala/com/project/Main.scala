@@ -1,7 +1,6 @@
 package com.project
 
 import akka.actor.{ActorSystem, Props}
-import akka.util.Timeout
 import com.project.actors.{HttpServerActor, JobActor, ProjectActor, WorkspaceActor}
 //import com.project.repository.slick.{JobRepository, ProjectRepository, WorkspaceRepository}
 //import com.project.service.slick.{JobService, ProjectService, WorkspaceService}
@@ -9,13 +8,11 @@ import com.project.service.scalikejdbc.{JobService, ProjectService, WorkspaceSer
 import scalikejdbc.config._
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.concurrent.duration.DurationInt
-import slick.jdbc.PostgresProfile.api._
+//import slick.jdbc.PostgresProfile.api._
 
 object Main extends App {
   implicit val system: ActorSystem = ActorSystem("ProjectSystem")
   implicit  val ec: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout: Timeout = Timeout(3.seconds)
   /*val db = Database.forConfig("db")
   val workspaceRepositorySlick = new WorkspaceRepository(db)
   val projectRepositorySlick = new ProjectRepository(db)

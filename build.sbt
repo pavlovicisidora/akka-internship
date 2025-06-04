@@ -2,7 +2,7 @@ name := "akka-quickstart-scala"
 
 version := "1.0"
 
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 resolvers += "Akka library repository".at("https://repo.akka.io/maven")
 
@@ -33,5 +33,6 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc"       % "4.3.2",
   "com.h2database"  %  "h2"                % "2.2.224",
   "ch.qos.logback"  %  "logback-classic"   % "1.5.6",
-  "org.scalikejdbc" %% "scalikejdbc-config" % "4.0.0"
+  "org.scalikejdbc" %% "scalikejdbc-config" % "4.0.0",
+  "io.lambdaworks" %% "scurl-detector" % "1.2.0"
 )

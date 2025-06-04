@@ -21,12 +21,15 @@ class JobService(jobRepository: JobRepository, projectRepository: ProjectReposit
   def getAll: Future[List[Job]] =
     jobRepository.getAll
 
-  def update(id: UUID, request: JobRequestUpdate): Future[Option[Job]] = {
+  def update(id: UUID, request: JobRequestUpdate): Future[Either[String, Job]] = {
     jobRepository.getById(id).flatMap {
-      case Some(existing) => jobRepository.update(request.toDomain(existing))
-      case None => Future.successful(None)
+      case Some(existing) =>
+        jobRepository.update(request.toDomain(existing))
+      case None =>
+        Future.successful(Left(s"Job with id $id not found"))
     }
   }
+
 
   def delete(id: UUID) : Future[Boolean] = jobRepository.delete(id)
 

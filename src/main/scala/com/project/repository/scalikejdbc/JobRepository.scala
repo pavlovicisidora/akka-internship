@@ -2,11 +2,14 @@ package com.project.repository.scalikejdbc
 
 import scalikejdbc._
 import org.joda.time.DateTime
+
 import java.util.UUID
 import com.project.model.Job
 import com.project.enums.JobStatus
 
-object JobRepository extends SQLSyntaxSupport[Job] {
+import scala.concurrent.{ExecutionContext, Future}
+
+class JobRepository()(implicit val ec: ExecutionContext) extends SQLSyntaxSupport[Job] {
 
   implicit val jobStatusBinder: TypeBinder[JobStatus] =
     TypeBinder.string.map(JobStatus.fromString)
@@ -30,7 +33,7 @@ object JobRepository extends SQLSyntaxSupport[Job] {
     updated_at = rs.get[DateTime]("updated_at")
   )
 
-  def create(job: Job)(implicit session: DBSession = AutoSession): Job = {
+  def create(job: Job)(implicit session: DBSession = AutoSession): Future[Job]= Future {
     sql"""
       INSERT INTO jobs (id, project_id, name, description, status, due_date, created_at, updated_at)
       VALUES (${job.id}, ${job.project_id}, ${job.name}, ${job.description}, ${job.status.toString},
@@ -39,16 +42,16 @@ object JobRepository extends SQLSyntaxSupport[Job] {
     job
   }
 
-  def getById(id: UUID)(implicit session: DBSession = ReadOnlyAutoSession): Option[Job] = {
+  def getById(id: UUID)(implicit session: DBSession = ReadOnlyAutoSession): Future[Option[Job]] = Future {
     sql"SELECT * FROM jobs WHERE id = $id"
       .map(rs => apply(rs)).single.apply()
   }
 
-  def getAll()(implicit session: DBSession = ReadOnlyAutoSession): List[Job] = {
+  def getAll()(implicit session: DBSession = ReadOnlyAutoSession): Future[List[Job]] = Future {
     sql"SELECT * FROM jobs".map(apply).list.apply()
   }
 
-  def update(job: Job)(implicit session: DBSession = AutoSession): Option[Job] = {
+  def update(job: Job)(implicit session: DBSession = AutoSession): Future[Option[Job]] = Future {
     val rows = sql"""
       UPDATE jobs SET
         project_id = ${job.project_id},
@@ -56,18 +59,17 @@ object JobRepository extends SQLSyntaxSupport[Job] {
         description = ${job.description},
         status = ${job.status.toString},
         due_date = ${job.due_date},
-        created_at = ${job.created_at},
         updated_at = ${job.updated_at}
       WHERE id = ${job.id}
     """.update.apply()
     if (rows > 0) Some(job) else None
   }
 
-  def delete(id: UUID)(implicit session: DBSession = AutoSession): Boolean = {
+  def delete(id: UUID)(implicit session: DBSession = AutoSession): Future[Boolean] = Future{
     sql"DELETE FROM jobs WHERE id = $id".update.apply() > 0
   }
 
-  def getByProject(projectId: UUID)(implicit session: DBSession = ReadOnlyAutoSession): List[Job] = {
+  def getByProject(projectId: UUID)(implicit session: DBSession = ReadOnlyAutoSession): Future[List[Job]] = Future {
     sql"SELECT * FROM jobs WHERE project_id = $projectId".map(apply).list.apply()
   }
 }

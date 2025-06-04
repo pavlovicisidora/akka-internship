@@ -25,13 +25,13 @@ class WorkspaceRepository(db: Database)(implicit ec: ExecutionContext) {
   def getAll: Future[List[Workspace]] =
     db.run(table.result).map(_.toList)
 
-  def update(newWorkspace: Workspace): Future[Option[Workspace]] = {
+  def update(newWorkspace: Workspace): Future[Either[String, Workspace]] = {
     val action = table
       .filter(_.id === newWorkspace.id)
       .update(newWorkspace)
       .map {
-        case 0 => None
-        case _ => Some(newWorkspace)
+        case 0 => Left("Unsuccessful updating workspace")
+        case _ => Right(newWorkspace)
       }
 
     db.run(action)

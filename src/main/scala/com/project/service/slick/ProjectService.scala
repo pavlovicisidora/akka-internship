@@ -21,10 +21,12 @@ class ProjectService(projectRepository: ProjectRepository, workspaceRepository: 
   def getAll: Future[List[Project]] =
     projectRepository.getAll
 
-  def update(id: UUID, request: ProjectRequestUpdate): Future[Option[Project]] = {
+  def update(id: UUID, request: ProjectRequestUpdate): Future[Either[String, Project]] = {
     projectRepository.getById(id).flatMap {
-      case Some(existing) => projectRepository.update(request.toDomain(existing))
-      case None => Future.successful(None)
+      case Some(existing) =>
+        projectRepository.update(request.toDomain(existing))
+      case None =>
+        Future.successful(Left(s"Project with id $id not found"))
     }
   }
 

@@ -6,8 +6,9 @@ import org.joda.time.DateTime
 import scalikejdbc.{AutoSession, DBSession, ReadOnlyAutoSession, SQLSyntaxSupport, TypeBinder, WrappedResultSet, scalikejdbcSQLInterpolationImplicitDef}
 
 import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}
 
-object ProjectRepository extends SQLSyntaxSupport[Project] {
+class ProjectRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSupport[Project] {
 
   implicit val jobStatusBinder: TypeBinder[ProjectStatus] =
     TypeBinder.string.map(ProjectStatus.fromString)
@@ -25,7 +26,7 @@ object ProjectRepository extends SQLSyntaxSupport[Project] {
     updated_at = rs.get[DateTime]("updated_at")
   )
 
-  def create(project: Project)(implicit session: DBSession = AutoSession): Project = {
+  def create(project: Project)(implicit session: DBSession = AutoSession): Future[Project] = Future {
     sql"""
          INSERT INTO projects (id, workspace_id, name, description, status,
                                  created_at, updated_at)
@@ -36,31 +37,30 @@ object ProjectRepository extends SQLSyntaxSupport[Project] {
     project
   }
 
-  def getById(id: UUID)(implicit session: DBSession = ReadOnlyAutoSession) : Option[Project] = {
+  def getById(id: UUID)(implicit session: DBSession = ReadOnlyAutoSession) : Future[Option[Project]] = Future {
     sql"SELECT * FROM projects WHERE id = $id"
       .map(apply).single.apply()
   }
 
-  def getAll()(implicit session: DBSession = ReadOnlyAutoSession) : List[Project] = {
+  def getAll()(implicit session: DBSession = ReadOnlyAutoSession) : Future[List[Project]] = Future {
     sql"SELECT * FROM projects"
       .map(apply).list.apply()
   }
 
-  def update(project: Project)(implicit session: DBSession = AutoSession): Option[Project] = {
+  def update(project: Project)(implicit session: DBSession = AutoSession): Future[Option[Project]] = Future {
     val rows = sql"""
       UPDATE projects SET
         workspace_id = ${project.workspace_id},
         name = ${project.name},
         description = ${project.description},
         status = ${ProjectStatus.toString(project.status)},
-        created_at = ${project.created_at},
         updated_at = ${project.updated_at}
       WHERE id = ${project.id}
     """.update.apply()
     if (rows > 0) Some(project) else None
   }
 
-  def delete(id: UUID)(implicit session: DBSession = AutoSession): Boolean = {
+  def delete(id: UUID)(implicit session: DBSession = AutoSession): Future[Boolean] = Future {
     val now = DateTime.now
     val rows = sql"""
       UPDATE projects SET
@@ -71,8 +71,8 @@ object ProjectRepository extends SQLSyntaxSupport[Project] {
     if (rows > 0) true else false
   }
 
-  def getByWorkspace(workspaceId: UUID)(implicit session: DBSession = ReadOnlyAutoSession): List[Project] = {
-    sql"SELECT * FROM projects WHERE project_id = $workspaceId".map(apply).list.apply()
+  def getByWorkspace(workspaceId: UUID)(implicit session: DBSession = ReadOnlyAutoSession): Future[List[Project]] = Future {
+    sql"SELECT * FROM projects WHERE workspaceId = $workspaceId".map(apply).list.apply()
   }
 
 }

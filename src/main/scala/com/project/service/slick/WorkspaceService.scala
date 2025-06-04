@@ -17,10 +17,12 @@ class WorkspaceService(repository: WorkspaceRepository)(implicit ec: ExecutionCo
   def getAll: Future[List[Workspace]] =
     repository.getAll
 
-  def update(id: UUID, request: WorkspaceRequestUpdate): Future[Option[Workspace]] = {
+  def update(id: UUID, request: WorkspaceRequestUpdate): Future[Either[String, Workspace]] = {
     repository.getById(id).flatMap {
-      case Some(existing) => repository.update(request.toDomain(existing))
-      case None => Future.successful(None)
+      case Some(existing) =>
+        repository.update(request.toDomain(existing))
+      case None =>
+        Future.successful(Left(s"Workspace with id $id not found"))
     }
   }
 

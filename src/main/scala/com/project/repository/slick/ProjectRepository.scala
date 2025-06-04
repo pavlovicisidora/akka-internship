@@ -12,36 +12,36 @@ import slick.jdbc.PostgresProfile.api._
 
 class ProjectRepository(db: Database)(implicit ec: ExecutionContext) {
 
-  val table = ProjectTable.projects
+  val projects = ProjectTable.projects
 
   def create(project: Project): Future[Project] = {
     val insertAction = for {
-      _ <- table += project
+      _ <- projects += project
     } yield project
 
     db.run(insertAction)
   }
 
   def getById(id: UUID): Future[Option[Project]] =
-    db.run(table.filter(_.id === id).result.headOption)
+    db.run(projects.filter(_.id === id).result.headOption)
 
   def getAll: Future[List[Project]] =
-    db.run(table.result).map(_.toList)
+    db.run(projects.result).map(_.toList)
 
-  def update(newProject: Project): Future[Option[Project]] = {
-    val action = table
+  def update(newProject: Project): Future[Either[String, Project]] = {
+    val action = projects
       .filter(_.id === newProject.id)
       .update(newProject)
       .map {
-        case 0 => None
-        case _ => Some(newProject)
+        case 0 => Left("Unsuccessful updating project")
+        case _ => Right(newProject)
       }
 
     db.run(action)
   }
 
   def delete(id: UUID): Future[Option[Project]] = {
-    val query = table.filter(_.id === id)
+    val query = projects.filter(_.id === id)
     val action = query.result.headOption.flatMap {
       case None =>
         DBIO.successful(None)
@@ -57,7 +57,7 @@ class ProjectRepository(db: Database)(implicit ec: ExecutionContext) {
   }
 
   def getByWorkspace(workspaceId: UUID) : Future[List[Project]] = {
-    db.run(table.filter(_.workspaceId === workspaceId).result).map(_.toList)
+    db.run(projects.filter(_.workspaceId === workspaceId).result).map(_.toList)
   }
 
 }
