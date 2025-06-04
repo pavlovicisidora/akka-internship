@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.project.json.JsonFormats
-import com.project.model.{Project, ProjectRequestCreate, ProjectRequestUpdate}
+import com.project.jwt.AuthDirective
+import com.project.model.{Project, ProjectRequestCreate, ProjectRequestCreateRaw, ProjectRequestUpdate}
 import com.project.protocol.ProjectProtocol._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,11 +19,14 @@ class ProjectRoutes(projectActor: ActorRef)(implicit timeout: Timeout, ec: Execu
   val routes: Route =
     pathPrefix("project") {
       pathEndOrSingleSlash {
-        post {
-          entity(as[ProjectRequestCreate]) {
-            request =>
-              val created: Future[Option[Project]] = (projectActor ? CreateProject(request)).mapTo[Option[Project]]
-              complete(StatusCodes.Created -> created)
+        AuthDirective.authenticate { userId =>
+          post {
+            entity(as[ProjectRequestCreateRaw]) {
+              rawRequest =>
+                val enriched = ProjectRequestCreate.fromRaw(rawRequest, userId)
+                val created: Future[Option[Project]] = (projectActor ? CreateProject(enriched)).mapTo[Option[Project]]
+                complete(StatusCodes.Created -> created)
+            }
           }
         } ~
           get {

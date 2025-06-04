@@ -15,14 +15,16 @@ import scala.concurrent.duration.DurationInt
 class HttpServerActor(
                        workspaceActor: ActorRef,
                        projectActor: ActorRef,
-                       jobActor: ActorRef)(implicit mat: Materializer, ec: ExecutionContext) extends Actor{
+                       jobActor: ActorRef,
+                       authActor: ActorRef)(implicit mat: Materializer, ec: ExecutionContext) extends Actor{
 
   implicit val timeout: Timeout = Timeout(3.seconds)
   private val workspaceRoutes = new WorkspaceRoutes(workspaceActor)
   private val projectRoutes = new ProjectRoutes(projectActor)
   private val jobRoutes = new JobRoutes(jobActor)
+  private val userRoutes = new UserRoutes(authActor)
 
-  val routes: Route = workspaceRoutes.routes ~ projectRoutes.routes ~ jobRoutes.routes
+  val routes: Route = workspaceRoutes.routes ~ projectRoutes.routes ~ jobRoutes.routes ~ userRoutes.routes
 
   Http().newServerAt("localhost", 8080).bind(routes)
 

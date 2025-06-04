@@ -34,5 +34,8 @@ libraryDependencies ++= Seq(
   "com.h2database"  %  "h2"                % "2.2.224",
   "ch.qos.logback"  %  "logback-classic"   % "1.5.6",
   "org.scalikejdbc" %% "scalikejdbc-config" % "4.0.0",
-  "io.lambdaworks" %% "scurl-detector" % "1.2.0"
+  "com.pauldijou" %% "jwt-core" % "5.0.0",
+  "com.pauldijou" %% "jwt-spray-json" % "5.0.0",
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
+
 )

@@ -13,19 +13,33 @@ case class Job(
               status: JobStatus,
               due_date: Option[DateTime],
               created_at: DateTime = DateTime.now(),
-              updated_at: DateTime = DateTime.now()
+              updated_at: DateTime = DateTime.now(),
+              created_by: UUID
               )
+
+case class JobRequestCreateRaw(
+                                project_id: UUID,
+                                name: String,
+                                description: Option[String],
+                                due_date: Option[DateTime]
+                              )
 
 case class JobRequestCreate(
                        project_id: UUID,
                        name: String,
                        description: Option[String],
-                       due_date: Option[DateTime]
+                       due_date: Option[DateTime],
+                       created_by: UUID
                      ) {
 
   def toDomain: Job =
-    Job(UUID.randomUUID(), project_id, name, description, JobStatus.Pending, due_date, DateTime.now, DateTime.now)
+    Job(UUID.randomUUID(), project_id, name, description, JobStatus.Pending, due_date, DateTime.now, DateTime.now, created_by)
 
+}
+
+object JobRequestCreate {
+  def fromRaw(raw: JobRequestCreateRaw, userId: UUID): JobRequestCreate =
+    JobRequestCreate(raw.project_id, raw.name, raw.description, raw.due_date, userId)
 }
 
 case class JobRequestUpdate(
@@ -59,7 +73,8 @@ case class JobRequestUpdate(
       description = newDescription,
       status = newStatus,
       due_date = newDueDate,
-      updated_at = DateTime.now
+      updated_at = DateTime.now,
+      created_by = job.created_by
     )
   }
 

@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.project.json.JsonFormats
-import com.project.model.{Job, JobRequestCreate, JobRequestUpdate}
+import com.project.jwt.AuthDirective
+import com.project.model.{Job, JobRequestCreate, JobRequestCreateRaw, JobRequestUpdate}
 import com.project.protocol.JobProtocol._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,11 +19,14 @@ class JobRoutes(jobActor: ActorRef)(implicit timeout: Timeout, ec: ExecutionCont
   val routes: Route =
     pathPrefix("job") {
       pathEndOrSingleSlash {
-        post {
-          entity(as[JobRequestCreate]) {
-            request =>
-              val created: Future[Option[Job]] = (jobActor ? CreateJob(request)).mapTo[Option[Job]]
-              complete(StatusCodes.Created -> created)
+        AuthDirective.authenticate { userId =>
+          post {
+            entity(as[JobRequestCreateRaw]) {
+              rawRequest =>
+                val enriched = JobRequestCreate.fromRaw(rawRequest, userId)
+                val created: Future[Option[Job]] = (jobActor ? CreateJob(enriched)).mapTo[Option[Job]]
+                complete(StatusCodes.Created -> created)
+            }
           }
         } ~
           get {

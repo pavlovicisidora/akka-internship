@@ -16,8 +16,9 @@ class JobTable(tag: Tag) extends Table[Job](tag, "jobs") {
   def dueDate = column[Option[DateTime]]("due_date")
   def createdAt = column[DateTime]("created_at")
   def updatedAt = column[DateTime]("updated_at")
+  def createdBy = column[UUID]("created_by")
 
-  def * = (id, projectId, name, description, status, dueDate, createdAt, updatedAt) <> (Job.tupled, Job.unapply)
+  def * = (id, projectId, name, description, status, dueDate, createdAt, updatedAt, createdBy) <> (Job.tupled, Job.unapply)
 }
 
 object JobTable {

@@ -10,17 +10,29 @@ case class Workspace(
                     name: String,
                     description: Option[String],
                     created_at: DateTime = DateTime.now(),
-                    updated_at: DateTime = DateTime.now()
+                    updated_at: DateTime = DateTime.now(),
+                    created_by: UUID
                     )
+
+case class WorkspaceRequestCreateRaw(
+                                   name: String,
+                                   description: Option[String]
+                                 )
 
 case class WorkspaceRequestCreate(
                              name: String,
-                             description: Option[String]
+                             description: Option[String],
+                             created_by: UUID
                            ) {
 
   def toDomain : Workspace =
-    Workspace(UUID.randomUUID(), name, description, DateTime.now, DateTime.now)
+    Workspace(UUID.randomUUID(), name, description, DateTime.now, DateTime.now, created_by)
 
+}
+
+object WorkspaceRequestCreate {
+  def fromRaw(raw: WorkspaceRequestCreateRaw, userId: UUID): WorkspaceRequestCreate =
+    WorkspaceRequestCreate(raw.name, raw.description, userId)
 }
 
 case class WorkspaceRequestUpdate(name: Option[TriState[String]], description: Option[TriState[String]]) {
@@ -40,7 +52,8 @@ case class WorkspaceRequestUpdate(name: Option[TriState[String]], description: O
     workspace.copy(
       name = newName,
       description = newDescription,
-      updated_at = DateTime.now()
+      updated_at = DateTime.now(),
+      created_by = workspace.created_by
     )
   }
 

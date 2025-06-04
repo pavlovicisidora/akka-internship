@@ -12,8 +12,9 @@ class WorkspaceTable(tag: Tag) extends Table[Workspace](tag, "workspaces") {
   def description = column[Option[String]]("description")
   def createdAt = column[DateTime]("created_at")
   def updatedAt = column[DateTime]("updated_at")
+  def createdBy = column[UUID]("created_by")
 
-  def * = (id, name, description, createdAt, updatedAt) <> (Workspace.tupled, Workspace.unapply)
+  def * = (id, name, description, createdAt, updatedAt, createdBy) <> (Workspace.tupled, Workspace.unapply)
 }
 
 object WorkspaceTable {

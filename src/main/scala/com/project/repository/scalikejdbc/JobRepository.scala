@@ -30,14 +30,15 @@ class JobRepository()(implicit val ec: ExecutionContext) extends SQLSyntaxSuppor
     status = rs.get[JobStatus]("status"),
     due_date = rs.get[Option[DateTime]]("due_date"),
     created_at = rs.get[DateTime]("created_at"),
-    updated_at = rs.get[DateTime]("updated_at")
+    updated_at = rs.get[DateTime]("updated_at"),
+    created_by = UUID.fromString(rs.string("created_by"))
   )
 
   def create(job: Job)(implicit session: DBSession = AutoSession): Future[Job]= Future {
     sql"""
-      INSERT INTO jobs (id, project_id, name, description, status, due_date, created_at, updated_at)
+      INSERT INTO jobs (id, project_id, name, description, status, due_date, created_at, updated_at, created_by)
       VALUES (${job.id}, ${job.project_id}, ${job.name}, ${job.description}, ${job.status.toString},
-              ${job.due_date}, ${job.created_at}, ${job.updated_at})
+              ${job.due_date}, ${job.created_at}, ${job.updated_at}, ${job.created_by})
     """.update.apply()
     job
   }
@@ -54,7 +55,6 @@ class JobRepository()(implicit val ec: ExecutionContext) extends SQLSyntaxSuppor
   def update(job: Job)(implicit session: DBSession = AutoSession): Future[Option[Job]] = Future {
     val rows = sql"""
       UPDATE jobs SET
-        project_id = ${job.project_id},
         name = ${job.name},
         description = ${job.description},
         status = ${job.status.toString},

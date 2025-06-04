@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.project.json.JsonFormats
+import com.project.jwt.AuthDirective
 import com.project.model._
 import com.project.protocol.WorkspaceProtocol._
 
@@ -19,10 +20,13 @@ class WorkspaceRoutes(workspaceActor: ActorRef)(implicit timeout: Timeout, ec: E
     pathPrefix("workspace") {
       pathEndOrSingleSlash {
         post {
-          entity(as[WorkspaceRequestCreate]) {
-            request =>
-              val created: Future[Workspace] = (workspaceActor ? CreateWorkspace(request)).mapTo[Workspace]
-              complete(StatusCodes.Created -> created)
+          AuthDirective.authenticate { userId =>
+            entity(as[WorkspaceRequestCreateRaw]) {
+              rawRequest =>
+                val enriched = WorkspaceRequestCreate.fromRaw(rawRequest, userId)
+                val created: Future[Workspace] = (workspaceActor ? CreateWorkspace(enriched)).mapTo[Workspace]
+                complete(StatusCodes.Created -> created)
+            }
           }
         } ~
           get {

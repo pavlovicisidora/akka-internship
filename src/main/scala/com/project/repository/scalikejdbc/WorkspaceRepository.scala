@@ -18,13 +18,14 @@ class WorkspaceRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSupp
     description = rs.stringOpt("description"),
     created_at = rs.get[DateTime]("created_at"),
     updated_at = rs.get[DateTime]("updated_at"),
+    created_by = UUID.fromString(rs.string("created_by"))
   )
 
   def create(workspace: Workspace)(implicit session: DBSession = AutoSession): Future[Workspace] = Future {
     sql"""
-         INSERT INTO workspaces(id, name, description, created_at, updated_at)
+         INSERT INTO workspaces(id, name, description, created_at, updated_at, created_by)
          VALUES (${workspace.id}, ${workspace.name}, ${workspace.description}, ${workspace.created_at},
-         ${workspace.updated_at})
+         ${workspace.updated_at}, ${workspace.created_by})
        """.update.apply()
     workspace
   }

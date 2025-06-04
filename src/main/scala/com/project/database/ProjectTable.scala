@@ -15,8 +15,9 @@ class ProjectTable(tag: Tag) extends Table[Project](tag, "projects") {
   def status = column[ProjectStatus]("status")
   def createdAt = column[DateTime]("created_at")
   def updatedAt = column[DateTime]("updated_at")
+  def createdBy = column[UUID]("created_by")
 
-  def * = (id, workspaceId, name, description, status, createdAt, updatedAt) <> (Project.tupled, Project.unapply)
+  def * = (id, workspaceId, name, description, status, createdAt, updatedAt, createdBy) <> (Project.tupled, Project.unapply)
 }
 
 object ProjectTable {

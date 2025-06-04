@@ -23,16 +23,17 @@ class ProjectRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSuppor
     description = rs.stringOpt("description"),
     status = rs.get[ProjectStatus]("status"),
     created_at = rs.get[DateTime]("created_at"),
-    updated_at = rs.get[DateTime]("updated_at")
+    updated_at = rs.get[DateTime]("updated_at"),
+    created_by = UUID.fromString(rs.string("created_by"))
   )
 
   def create(project: Project)(implicit session: DBSession = AutoSession): Future[Project] = Future {
     sql"""
          INSERT INTO projects (id, workspace_id, name, description, status,
-                                 created_at, updated_at)
+                                 created_at, updated_at, created_by)
          VALUES (${project.id}, ${project.workspace_id}, ${project.name},
                  ${project.description}, ${ProjectStatus.toString(project.status)}, ${project.created_at},
-                 ${project.updated_at})
+                 ${project.updated_at}, ${project.created_by})
        """.update.apply()
     project
   }
@@ -50,7 +51,6 @@ class ProjectRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSuppor
   def update(project: Project)(implicit session: DBSession = AutoSession): Future[Option[Project]] = Future {
     val rows = sql"""
       UPDATE projects SET
-        workspace_id = ${project.workspace_id},
         name = ${project.name},
         description = ${project.description},
         status = ${ProjectStatus.toString(project.status)},

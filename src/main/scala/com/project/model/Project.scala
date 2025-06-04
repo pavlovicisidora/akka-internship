@@ -12,18 +12,31 @@ case class Project(
                     description: Option[String],
                     status: ProjectStatus,
                     created_at: DateTime = DateTime.now(),
-                    updated_at: DateTime = DateTime.now()
+                    updated_at: DateTime = DateTime.now(),
+                    created_by: UUID
                   )
+
+case class ProjectRequestCreateRaw(
+                                    workspace_id: UUID,
+                                    name: String,
+                                    description: Option[String]
+                                  )
 
 case class ProjectRequestCreate(
                            workspace_id: UUID,
                            name: String,
-                           description: Option[String]
+                           description: Option[String],
+                           created_by: UUID
                          ) {
 
   def toDomain : Project =
-    Project(UUID.randomUUID(), workspace_id, name, description, ProjectStatus.Active, DateTime.now, DateTime.now)
+    Project(UUID.randomUUID(), workspace_id, name, description, ProjectStatus.Active, DateTime.now, DateTime.now, created_by)
 
+}
+
+object ProjectRequestCreate {
+  def fromRaw(raw: ProjectRequestCreateRaw, userId: UUID): ProjectRequestCreate =
+    ProjectRequestCreate(raw.workspace_id, raw.name, raw.description, userId)
 }
 
 case class ProjectRequestUpdate(
@@ -50,7 +63,8 @@ case class ProjectRequestUpdate(
       description = newDescription,
       status = newStatus,
       created_at = project.created_at,
-      updated_at = DateTime.now()
+      updated_at = DateTime.now(),
+      created_by = project.created_by
     )
   }
 
