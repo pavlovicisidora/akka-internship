@@ -51,3 +51,6 @@ INSERT INTO projects (id, workspace_id, name, description, status, created_by, c
 INSERT INTO jobs (id, project_id, name, description, status, due_date, created_by, created_at) VALUES
 ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'Job 1', 'First job', 'Pending', NOW(), '33333333-3333-3333-3333-333333333333', NOW());
 
+INSERT INTO users (id, email, passwordHash) VALUES
+('33333333-3333-3333-3333-333333333333', 'isidora@gmail.com', '$2y$10$0QrqGhnN3xLa9FqVmw0AgeLcJu1lxdenHUqPI2fFcZ9k0grCIci5u');
+

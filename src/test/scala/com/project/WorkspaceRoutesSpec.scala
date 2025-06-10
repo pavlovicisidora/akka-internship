@@ -1,11 +1,13 @@
 package com.project
 
+import akka.http.scaladsl.model.headers.{Authorization, OAuth2BearerToken}
 import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.Directives.provide
+import akka.http.scaladsl.server.{Directive1, Route}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.testkit.TestProbe
 import akka.util.Timeout
-import com.project.model.{TriState, Workspace, WorkspaceRequestCreate, WorkspaceRequestUpdate}
+import com.project.model.{TriState, Workspace, WorkspaceRequestCreate, WorkspaceRequestCreateRaw, WorkspaceRequestUpdate}
 import com.project.routes.WorkspaceRoutes
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -13,9 +15,14 @@ import spray.json.enrichAny
 import com.project.json.JsonFormats
 import com.project.protocol.WorkspaceProtocol._
 import org.joda.time.DateTime
+import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
 
 import java.util.UUID
 import scala.concurrent.duration.DurationInt
+
+object TestAuthDirective {
+  def authenticate: Directive1[UUID] = provide(UUID.fromString("33333333-3333-3333-3333-333333333333"))
+}
 
 class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteTest with JsonFormats {
   implicit val timeout: Timeout = Timeout(3.seconds)
@@ -26,11 +33,20 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
     "create workspace" in {
       val name = "Workspace"
       val description = "Workspace's description"
-      val request = WorkspaceRequestCreate(name, Some(description))
+      val rawRequest = WorkspaceRequestCreateRaw(name, Some(description))
+      val userId = UUID.fromString("33333333-3333-3333-3333-333333333333")
+      val secretKey = "secret-key"
+      val claim = JwtClaim(
+        content = s"""{"userId":"$userId"}""",
+        expiration = Some((System.currentTimeMillis() / 1000) + 3600)
+      )
+      val token = Jwt.encode(claim, secretKey, JwtAlgorithm.HS256)
 
       val httpRequest = Post("/workspace")
-        .withEntity(ContentTypes.`application/json`, request.toJson.prettyPrint)
+        .withEntity(ContentTypes.`application/json`, rawRequest.toJson.prettyPrint)
+        .withHeaders(Authorization(OAuth2BearerToken(token)))
 
+      val request = WorkspaceRequestCreate(rawRequest.name, rawRequest.description, userId)
       val result = httpRequest ~> routes
       val receivedMessage = probe.expectMsgType[CreateWorkspace]
       receivedMessage.request shouldEqual request
@@ -38,7 +54,8 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
       val createdWorkspace = Workspace(
         id = UUID.randomUUID(),
         name = name,
-        description = Some(description)
+        description = Some(description),
+        created_by = UUID.randomUUID()
       )
       probe.reply(createdWorkspace)
 
@@ -57,7 +74,7 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
       msg.id shouldEqual id
       msg.request shouldEqual WorkspaceRequestUpdate(None, Some(TriState.Set("new description")))
 
-      val workspace = Some(Workspace(id = id, name = "Test", description = Some("new description")))
+      val workspace = Some(Workspace(id = id, name = "Test", description = Some("new description"), created_by = UUID.randomUUID()))
       probe.reply(workspace)
 
       requestResult ~> check {
@@ -86,6 +103,7 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
         description = Some("Description test"),
         created_at = DateTime.now,
         updated_at = DateTime.now,
+        created_by = UUID.randomUUID()
       )
       val requestResult = Get(s"/workspace/$id") ~> routes
 
@@ -112,20 +130,22 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
           name = "Workspace 1",
           description = Some("Description 1"),
           created_at = DateTime.now,
-          updated_at = DateTime.now
+          updated_at = DateTime.now,
+          created_by = UUID.randomUUID()
         ),
         Workspace(
           id = UUID.randomUUID(),
           name = "Workspace 2",
           description = Some("Description 2"),
           created_at = DateTime.now,
-          updated_at = DateTime.now
+          updated_at = DateTime.now,
+          created_by = UUID.randomUUID()
         )
       )
 
       val requestResult = Get("/workspace") ~> routes
 
-      val msg = probe.expectMsgType[GetAllWorkspaces.type]
+      probe.expectMsgType[GetAllWorkspaces.type]
       probe.reply(workspaces)
 
       requestResult ~> check {
