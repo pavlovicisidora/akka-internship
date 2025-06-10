@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % "10.5.3" % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.18",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+  "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % Test,
   "com.typesafe.akka" %% "akka-http" % "10.5.3",
   "com.typesafe.akka" %% "akka-stream" % "2.8.8",
   "com.typesafe.akka" %% "akka-http-spray-json" % "10.5.3",
@@ -36,6 +37,7 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-config" % "4.0.0",
   "com.pauldijou" %% "jwt-core" % "5.0.0",
   "com.pauldijou" %% "jwt-spray-json" % "5.0.0",
-  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0",
+  "org.scalikejdbc" %% "scalikejdbc-test" % "4.1.0" % Test
 
 )
