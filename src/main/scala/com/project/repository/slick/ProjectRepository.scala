@@ -48,7 +48,7 @@ class ProjectRepository(db: Database)(implicit ec: ExecutionContext) {
       case Some(existing) =>
         val deleted = existing.copy(
           status = Deleted,
-          updated_at = DateTime.now()
+          updatedAt = DateTime.now()
         )
         query.update(deleted).map(_ => Some(deleted))
     }

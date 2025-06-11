@@ -7,36 +7,36 @@ import java.util.UUID
 
 case class Project(
                     id: UUID,
-                    workspace_id: UUID,
+                    workspaceId: UUID,
                     name: String,
                     description: Option[String],
                     status: ProjectStatus,
-                    created_at: DateTime = DateTime.now(),
-                    updated_at: DateTime = DateTime.now(),
-                    created_by: UUID
+                    createdAt: DateTime = DateTime.now(),
+                    updatedAt: DateTime = DateTime.now(),
+                    createdBy: UUID
                   )
 
 case class ProjectRequestCreateRaw(
-                                    workspace_id: UUID,
+                                    workspaceId: UUID,
                                     name: String,
                                     description: Option[String]
                                   )
 
 case class ProjectRequestCreate(
-                           workspace_id: UUID,
+                           workspaceId: UUID,
                            name: String,
                            description: Option[String],
-                           created_by: UUID
+                           createdBy: UUID
                          ) {
 
   def toDomain : Project =
-    Project(UUID.randomUUID(), workspace_id, name, description, ProjectStatus.Active, DateTime.now, DateTime.now, created_by)
+    Project(UUID.randomUUID(), workspaceId, name, description, ProjectStatus.Active, DateTime.now, DateTime.now, createdBy)
 
 }
 
 object ProjectRequestCreate {
   def fromRaw(raw: ProjectRequestCreateRaw, userId: UUID): ProjectRequestCreate =
-    ProjectRequestCreate(raw.workspace_id, raw.name, raw.description, userId)
+    ProjectRequestCreate(raw.workspaceId, raw.name, raw.description, userId)
 }
 
 case class ProjectRequestUpdate(
@@ -58,13 +58,13 @@ case class ProjectRequestUpdate(
 
     project.copy(
       id = project.id,
-      workspace_id = project.workspace_id,
+      workspaceId = project.workspaceId,
       name = newName,
       description = newDescription,
       status = newStatus,
-      created_at = project.created_at,
-      updated_at = DateTime.now(),
-      created_by = project.created_by
+      createdAt = project.createdAt,
+      updatedAt = DateTime.now(),
+      createdBy = project.createdBy
     )
   }
 

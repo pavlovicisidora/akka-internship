@@ -1,7 +1,5 @@
 package com.project.model
 
-import com.project.model.TriState.Unset
-
 import java.util.UUID
 import org.joda.time.DateTime
 
@@ -9,9 +7,9 @@ case class Workspace(
                     id: UUID,
                     name: String,
                     description: Option[String],
-                    created_at: DateTime = DateTime.now(),
-                    updated_at: DateTime = DateTime.now(),
-                    created_by: UUID
+                    createdAt: DateTime = DateTime.now(),
+                    updatedAt: DateTime = DateTime.now(),
+                    createdBy: UUID
                     )
 
 case class WorkspaceRequestCreateRaw(
@@ -22,11 +20,11 @@ case class WorkspaceRequestCreateRaw(
 case class WorkspaceRequestCreate(
                              name: String,
                              description: Option[String],
-                             created_by: UUID
+                             createdBy: UUID
                            ) {
 
   def toDomain : Workspace =
-    Workspace(UUID.randomUUID(), name, description, DateTime.now, DateTime.now, created_by)
+    Workspace(UUID.randomUUID(), name, description, DateTime.now, DateTime.now, createdBy)
 
 }
 
@@ -52,8 +50,8 @@ case class WorkspaceRequestUpdate(name: Option[TriState[String]], description: O
     workspace.copy(
       name = newName,
       description = newDescription,
-      updated_at = DateTime.now(),
-      created_by = workspace.created_by
+      updatedAt = DateTime.now(),
+      createdBy = workspace.createdBy
     )
   }
 

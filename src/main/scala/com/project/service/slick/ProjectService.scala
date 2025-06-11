@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ProjectService(projectRepository: ProjectRepository, workspaceRepository: WorkspaceRepository)(implicit ec: ExecutionContext) {
 
   def create(pRequest: ProjectRequestCreate): Future[Option[Project]] = {
-    workspaceRepository.getById(pRequest.workspace_id).flatMap {
+    workspaceRepository.getById(pRequest.workspaceId).flatMap {
       case Some(_) => projectRepository.create(pRequest.toDomain).map(Some(_))
       case None => Future.successful(None)
     }

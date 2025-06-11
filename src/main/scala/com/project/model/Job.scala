@@ -6,40 +6,40 @@ import org.joda.time.DateTime
 import java.util.UUID
 
 case class Job(
-              id: UUID,
-              project_id: UUID,
-              name: String,
-              description: Option[String],
-              status: JobStatus,
-              due_date: Option[DateTime],
-              created_at: DateTime = DateTime.now(),
-              updated_at: DateTime = DateTime.now(),
-              created_by: UUID
+                id: UUID,
+                projectId: UUID,
+                name: String,
+                description: Option[String],
+                status: JobStatus,
+                dueDate: Option[DateTime],
+                createdAt: DateTime = DateTime.now(),
+                updatedAt: DateTime = DateTime.now(),
+                createdBy: UUID
               )
 
 case class JobRequestCreateRaw(
-                                project_id: UUID,
+                                projectId: UUID,
                                 name: String,
                                 description: Option[String],
-                                due_date: Option[DateTime]
+                                dueDate: Option[DateTime]
                               )
 
 case class JobRequestCreate(
-                       project_id: UUID,
-                       name: String,
-                       description: Option[String],
-                       due_date: Option[DateTime],
-                       created_by: UUID
+                             projectId: UUID,
+                             name: String,
+                             description: Option[String],
+                             dueDate: Option[DateTime],
+                             createdBy: UUID
                      ) {
 
   def toDomain: Job =
-    Job(UUID.randomUUID(), project_id, name, description, JobStatus.Pending, due_date, DateTime.now, DateTime.now, created_by)
+    Job(UUID.randomUUID(), projectId, name, description, JobStatus.Pending, dueDate, DateTime.now, DateTime.now, createdBy)
 
 }
 
 object JobRequestCreate {
   def fromRaw(raw: JobRequestCreateRaw, userId: UUID): JobRequestCreate =
-    JobRequestCreate(raw.project_id, raw.name, raw.description, raw.due_date, userId)
+    JobRequestCreate(raw.projectId, raw.name, raw.description, raw.dueDate, userId)
 }
 
 case class JobRequestUpdate(
@@ -63,18 +63,18 @@ case class JobRequestUpdate(
     val newDueDate: Option[DateTime] = due_date.getOrElse(TriState.Unset) match {
       case TriState.Set(value) => Some(value)
       case TriState.Null => None
-      case _ => job.due_date
+      case _ => job.dueDate
     }
 
     job.copy(
       id = job.id,
-      project_id = job.project_id,
+      projectId = job.projectId,
       name = newName,
       description = newDescription,
       status = newStatus,
-      due_date = newDueDate,
-      updated_at = DateTime.now,
-      created_by = job.created_by
+      dueDate = newDueDate,
+      updatedAt = DateTime.now,
+      createdBy = job.createdBy
     )
   }
 

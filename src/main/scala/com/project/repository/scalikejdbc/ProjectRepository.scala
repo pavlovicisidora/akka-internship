@@ -18,22 +18,22 @@ class ProjectRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSuppor
 
   def apply(rs: WrappedResultSet): Project = Project(
     id = UUID.fromString(rs.string("id")),
-    workspace_id = UUID.fromString(rs.string("workspace_id")),
+    workspaceId = UUID.fromString(rs.string("workspace_id")),
     name = rs.string("name"),
     description = rs.stringOpt("description"),
     status = rs.get[ProjectStatus]("status"),
-    created_at = rs.get[DateTime]("created_at"),
-    updated_at = rs.get[DateTime]("updated_at"),
-    created_by = UUID.fromString(rs.string("created_by"))
+    createdAt = rs.get[DateTime]("created_at"),
+    updatedAt = rs.get[DateTime]("updated_at"),
+    createdBy = UUID.fromString(rs.string("created_by"))
   )
 
   def create(project: Project)(implicit session: DBSession = AutoSession): Future[Project] = Future {
     sql"""
          INSERT INTO projects (id, workspace_id, name, description, status,
                                  created_at, updated_at, created_by)
-         VALUES (${project.id}, ${project.workspace_id}, ${project.name},
-                 ${project.description}, ${ProjectStatus.toString(project.status)}, ${project.created_at},
-                 ${project.updated_at}, ${project.created_by})
+         VALUES (${project.id}, ${project.workspaceId}, ${project.name},
+                 ${project.description}, ${ProjectStatus.toString(project.status)}, ${project.createdAt},
+                 ${project.updatedAt}, ${project.createdBy})
        """.update.apply()
     project
   }
@@ -54,7 +54,7 @@ class ProjectRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSuppor
         name = ${project.name},
         description = ${project.description},
         status = ${ProjectStatus.toString(project.status)},
-        updated_at = ${project.updated_at}
+        updated_at = ${project.updatedAt}
       WHERE id = ${project.id}
     """.update.apply()
     if (rows > 0) Some(project) else None

@@ -12,7 +12,7 @@ class JobService()(implicit ec: ExecutionContext) {
   val jobRepository = new JobRepository()
 
   def create(jRequest: JobRequestCreate)(implicit session: DBSession = AutoSession): Future[Option[Job]] = {
-    projectRepository.getById(jRequest.project_id).flatMap {
+    projectRepository.getById(jRequest.projectId).flatMap {
       case Some(_) => jobRepository.create(jRequest.toDomain).map(Some(_))
       case None => Future.successful(None)
     }

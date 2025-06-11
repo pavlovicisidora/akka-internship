@@ -16,16 +16,16 @@ class WorkspaceRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSupp
     id = UUID.fromString(rs.string("id")),
     name = rs.string("name"),
     description = rs.stringOpt("description"),
-    created_at = rs.get[DateTime]("created_at"),
-    updated_at = rs.get[DateTime]("updated_at"),
-    created_by = UUID.fromString(rs.string("created_by"))
+    createdAt = rs.get[DateTime]("created_at"),
+    updatedAt = rs.get[DateTime]("updated_at"),
+    createdBy = UUID.fromString(rs.string("created_by"))
   )
 
   def create(workspace: Workspace)(implicit session: DBSession = AutoSession): Future[Workspace] = Future {
     sql"""
          INSERT INTO workspaces(id, name, description, created_at, updated_at, created_by)
-         VALUES (${workspace.id}, ${workspace.name}, ${workspace.description}, ${workspace.created_at},
-         ${workspace.updated_at}, ${workspace.created_by})
+         VALUES (${workspace.id}, ${workspace.name}, ${workspace.description}, ${workspace.createdAt},
+         ${workspace.updatedAt}, ${workspace.createdBy})
        """.update.apply()
     workspace
   }
@@ -44,7 +44,7 @@ class WorkspaceRepository()(implicit ec: ExecutionContext) extends SQLSyntaxSupp
         UPDATE workspaces SET
           name = ${workspace.name},
           description = ${workspace.description},
-          updated_at = ${workspace.updated_at}
+          updated_at = ${workspace.updatedAt}
         WHERE id = ${workspace.id}
       """.update.apply()
       if(rows > 0) Some(workspace) else None

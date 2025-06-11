@@ -24,7 +24,7 @@ class WorkspaceRepositorySpec extends DatabaseSpec {
     id = UUID.randomUUID(),
     name = name,
     description = Some("description"),
-    created_by = userId
+    createdBy = userId
   )
 
   "WorkspaceRepository" should {
@@ -39,7 +39,7 @@ class WorkspaceRepositorySpec extends DatabaseSpec {
         found shouldBe defined
         found.get.name shouldBe "Test Workspace"
         found.get.description shouldBe Some("description")
-        found.get.created_by shouldBe userId
+        found.get.createdBy shouldBe userId
       }
     }
 

@@ -12,7 +12,7 @@ class ProjectService()(implicit ec: ExecutionContext) {
   val projectRepository = new ProjectRepository()
 
   def create(pRequest: ProjectRequestCreate)(implicit session: DBSession = AutoSession): Future[Option[Project]] = {
-    workspaceRepository.getById(pRequest.workspace_id).flatMap {
+    workspaceRepository.getById(pRequest.workspaceId).flatMap {
       case Some(_) => projectRepository.create(pRequest.toDomain).map(Some(_))
       case None => Future.successful(None)
     }

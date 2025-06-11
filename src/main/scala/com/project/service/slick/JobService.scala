@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class JobService(jobRepository: JobRepository, projectRepository: ProjectRepository)(implicit ec: ExecutionContext) {
 
   def create(jRequest: JobRequestCreate): Future[Option[Job]] = {
-    projectRepository.getById(jRequest.project_id). flatMap {
+    projectRepository.getById(jRequest.projectId). flatMap {
       case Some(_) => jobRepository.create(jRequest.toDomain).map(Some(_))
       case None => Future.successful(None)
     }

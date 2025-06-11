@@ -55,7 +55,7 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
         id = UUID.randomUUID(),
         name = name,
         description = Some(description),
-        created_by = UUID.randomUUID()
+        createdBy = UUID.randomUUID()
       )
       probe.reply(createdWorkspace)
 
@@ -74,7 +74,7 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
       msg.id shouldEqual id
       msg.request shouldEqual WorkspaceRequestUpdate(None, Some(TriState.Set("new description")))
 
-      val workspace = Some(Workspace(id = id, name = "Test", description = Some("new description"), created_by = UUID.randomUUID()))
+      val workspace = Some(Workspace(id = id, name = "Test", description = Some("new description"), createdBy = UUID.randomUUID()))
       probe.reply(workspace)
 
       requestResult ~> check {
@@ -101,9 +101,9 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
         id = id,
         name = "Test",
         description = Some("Description test"),
-        created_at = DateTime.now,
-        updated_at = DateTime.now,
-        created_by = UUID.randomUUID()
+        createdAt = DateTime.now,
+        updatedAt = DateTime.now,
+        createdBy = UUID.randomUUID()
       )
       val requestResult = Get(s"/workspace/$id") ~> routes
 
@@ -118,8 +118,8 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
         returned.id shouldEqual expectedWorkspace.id
         returned.name shouldEqual expectedWorkspace.name
         returned.description shouldEqual expectedWorkspace.description
-        returned.created_at.toString shouldEqual expectedWorkspace.created_at.toString
-        returned.updated_at.toString shouldEqual expectedWorkspace.updated_at.toString
+        returned.createdAt.toString shouldEqual expectedWorkspace.createdAt.toString
+        returned.updatedAt.toString shouldEqual expectedWorkspace.updatedAt.toString
       }
     }
 
@@ -129,17 +129,17 @@ class WorkspaceRoutesSpec extends AnyWordSpec with Matchers with ScalatestRouteT
           id = UUID.randomUUID(),
           name = "Workspace 1",
           description = Some("Description 1"),
-          created_at = DateTime.now,
-          updated_at = DateTime.now,
-          created_by = UUID.randomUUID()
+          createdAt = DateTime.now,
+          updatedAt = DateTime.now,
+          createdBy = UUID.randomUUID()
         ),
         Workspace(
           id = UUID.randomUUID(),
           name = "Workspace 2",
           description = Some("Description 2"),
-          created_at = DateTime.now,
-          updated_at = DateTime.now,
-          created_by = UUID.randomUUID()
+          createdAt = DateTime.now,
+          updatedAt = DateTime.now,
+          createdBy = UUID.randomUUID()
         )
       )
 
